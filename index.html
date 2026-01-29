@@ -17,10 +17,7 @@
     background: #fff;
   }
 
-  h2 {
-    font-size: 1.4rem;
-    margin: 0 0 10px 0;
-  }
+  h2 { font-size: 1.4rem; margin: 0 0 10px 0; }
 
   button {
     padding: 12px 16px;
@@ -35,8 +32,9 @@
 
   button:active { background: #e0e0e0; }
   button:disabled { opacity: 0.5; }
-
   .hidden { display: none; }
+
+  #loadStatus { font-size: 14px; color: #666; margin-bottom: 8px; }
 
   #timer {
     color: #555;
@@ -49,13 +47,7 @@
     margin-bottom: 10px;
   }
 
-  #helpToggle {
-    color: #666;
-    font-size: 14px;
-    cursor: pointer;
-    padding: 8px 0;
-    display: inline-block;
-  }
+  #helpToggle { color: #666; font-size: 14px; cursor: pointer; padding: 8px 0; display: inline-block; }
 
   #helpBox {
     border: 1px solid #e0e0e0;
@@ -69,19 +61,8 @@
 
   #helpBox > div { display: flex; flex-direction: column; gap: 6px; }
 
-  .question-header {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 12px;
-  }
-
-  #counter {
-    font-weight: 600;
-    font-size: 15px;
-    color: #333;
-    margin: 0;
-  }
+  .question-header { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+  #counter { font-weight: 600; font-size: 15px; color: #333; margin: 0; }
 
   .confidence-panel {
     border: 1px solid #e0e0e0;
@@ -94,18 +75,8 @@
     flex-wrap: wrap;
   }
 
-  .confidence-panel label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-  }
-
-  .confidence-panel input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-  }
+  .confidence-panel label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .confidence-panel input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
 
   .question-box {
     border: 1px solid #e0e0e0;
@@ -115,11 +86,7 @@
     margin-bottom: 12px;
   }
 
-  .question-box p {
-    margin: 0;
-    font-size: 16px;
-    line-height: 1.6;
-  }
+  .question-box p { margin: 0; font-size: 16px; line-height: 1.6; }
 
   .answers-box {
     border: 1px solid #e0e0e0;
@@ -144,13 +111,7 @@
 
   .answer:last-child { margin-bottom: 0; }
   .answer:active { background: #f0f0f0; }
-
-  .answer span {
-    color: #888;
-    font-size: 13px;
-    font-weight: 600;
-    min-width: 24px;
-  }
+  .answer span { color: #888; font-size: 13px; font-weight: 600; min-width: 24px; }
 
   .answer label {
     flex: 1;
@@ -162,24 +123,11 @@
     gap: 10px;
   }
 
-  .answer input[type="radio"] {
-    width: 22px;
-    height: 22px;
-    min-width: 22px;
-    cursor: pointer;
-    margin: 0;
-  }
+  .answer input[type="radio"] { width: 22px; height: 22px; min-width: 22px; cursor: pointer; margin: 0; }
 
-  .answer.correct {
-    background: #d4edda;
-    border-color: #28a745;
-  }
+  .answer.correct { background: #d4edda; border-color: #28a745; }
   .answer.correct label { color: #155724; font-weight: 600; }
-
-  .answer.wrong {
-    background: #f8d7da;
-    border-color: #dc3545;
-  }
+  .answer.wrong { background: #f8d7da; border-color: #dc3545; }
   .answer.wrong label { color: #721c24; font-weight: 600; }
 
   #resultLine {
@@ -193,90 +141,28 @@
 
   #resultLine:empty { display: none; }
 
-  .nav-buttons {
-    display: flex;
-    gap: 10px;
-    margin-top: 12px;
-  }
-
-  .nav-buttons button {
-    flex: 1;
-    padding: 14px;
-    font-size: 16px;
-    font-weight: 600;
-  }
-
-  #nextBtn {
-    background: #007bff;
-    color: #fff;
-    border-color: #007bff;
-  }
+  .nav-buttons { display: flex; gap: 10px; margin-top: 12px; }
+  .nav-buttons button { flex: 1; padding: 14px; font-size: 16px; font-weight: 600; }
+  #nextBtn { background: #007bff; color: #fff; border-color: #007bff; }
   #nextBtn:active { background: #0056b3; }
 
-  #examButtons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 12px;
-  }
+  #examButtons { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  #examButtons button { flex: 1; min-width: calc(50% - 8px); }
 
-  #examButtons button {
-    flex: 1;
-    min-width: calc(50% - 8px);
-  }
+  #stats { padding: 16px; background: #f9f9f9; border-radius: 10px; }
+  #stats h3 { margin: 0 0 12px 0; font-size: 1.2rem; }
+  #stats p { margin: 8px 0; font-size: 15px; line-height: 1.5; word-break: break-word; }
 
-  #stats {
-    padding: 16px;
-    background: #f9f9f9;
-    border-radius: 10px;
-  }
+  #reviewButtons { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+  #reviewButtons button { width: 100%; text-align: left; padding: 14px 16px; }
 
-  #stats h3 {
-    margin: 0 0 12px 0;
-    font-size: 1.2rem;
-  }
-
-  #stats p {
-    margin: 8px 0;
-    font-size: 15px;
-    line-height: 1.5;
-    word-break: break-word;
-  }
-
-  #reviewButtons {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 16px;
-  }
-
-  #reviewButtons button {
-    width: 100%;
-    text-align: left;
-    padding: 14px 16px;
-  }
-
-  hr {
-    border: none;
-    border-top: 1px solid #e0e0e0;
-    margin: 12px 0;
-  }
+  hr { border: none; border-top: 1px solid #e0e0e0; margin: 12px 0; }
 
   @media (min-width: 600px) {
     body { padding: 20px; }
-    
-    .question-header {
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
+    .question-header { flex-direction: row; justify-content: space-between; align-items: center; }
     #examButtons button { min-width: auto; flex: none; }
-    
-    #reviewButtons {
-      flex-direction: row;
-      flex-wrap: wrap;
-    }
+    #reviewButtons { flex-direction: row; flex-wrap: wrap; }
     #reviewButtons button { width: auto; flex: 1; }
   }
 </style>
@@ -284,7 +170,7 @@
 <body>
 
 <h2>Agentforce Exam</h2>
-<div id="loadStatus" style="font-size:14px;color:#666;margin-bottom:8px;">⏳ Зареждане на въпросите...</div>
+<div id="loadStatus">⏳ Зареждане на въпросите...</div>
 <div id="timer" class="hidden">Time: 105:00</div>
 
 <div id="helpToggle">🛈 Помощ / Клавиши</div>
@@ -342,6 +228,7 @@ const resultLineEl = document.getElementById("resultLine");
 const shuffleBtn = document.getElementById("shuffleBtn");
 const backBtn = document.getElementById("backBtn");
 const nextBtn = document.getElementById("nextBtn");
+const loadStatusEl = document.getElementById("loadStatus");
 
 let QUESTIONS = {}, ALL_QIDS = [], EXAMS = [], STACK = [], index = 0;
 let questionState = {}, answerOrder = {};
@@ -356,12 +243,12 @@ fetch("./agentforce_questions.json")
   .then(d => {
     d.questions.forEach(q => { QUESTIONS[q.number] = q; ALL_QIDS.push(q.number); });
     shuffleBtn.disabled = false;
-    document.getElementById("loadStatus").textContent = `✓ Заредени ${ALL_QIDS.length} въпроса`;
-    document.getElementById("loadStatus").style.color = "#28a745";
+    loadStatusEl.textContent = `✓ Заредени ${ALL_QIDS.length} въпроса`;
+    loadStatusEl.style.color = "#28a745";
   })
   .catch(err => {
-    document.getElementById("loadStatus").textContent = "✗ Грешка при зареждане на въпросите";
-    document.getElementById("loadStatus").style.color = "#dc3545";
+    loadStatusEl.textContent = "✗ Грешка при зареждане на въпросите";
+    loadStatusEl.style.color = "#dc3545";
     console.error(err);
   });
 
@@ -389,7 +276,7 @@ shuffleBtn.addEventListener("click", () => {
   const size = Math.ceil(s.length / 5);
   for (let i = 0; i < 5; i++) EXAMS.push(s.slice(i * size, (i + 1) * size));
   
-  examButtonsEl.innerHTML = EXAMS.map((_, i) => `<button data-exam="${i}">Изпит ${i + 1}</button>`).join("");
+  examButtonsEl.innerHTML = EXAMS.map((_, i) => `<button data-exam="${i}">Изпит ${i + 1} (${EXAMS[i].length})</button>`).join("");
   examButtonsEl.classList.remove("hidden");
 });
 
@@ -418,7 +305,7 @@ function showQuestion() {
   ensureOrderForQid(qid);
   const state = questionState[qid];
 
-  counterEl.innerText = `[${qid}] ${index + 1}/${STACK.length}`;
+  counterEl.innerText = `[Q${qid}] ${index + 1} / ${STACK.length}`;
   questionEl.innerText = q.question;
   answersEl.innerHTML = "";
   resultLineEl.innerHTML = "";
@@ -447,7 +334,7 @@ function showQuestion() {
       resultLineEl.style.color = "#155724";
     } else {
       selWrap?.classList.add("wrong");
-      resultLineEl.innerText = `❌ Грешно (Верен: ${getCorrectText(qid)})`;
+      resultLineEl.innerText = `❌ Грешно → ${getCorrectText(qid)}`;
       resultLineEl.style.background = "#f8d7da";
       resultLineEl.style.color = "#721c24";
     }
@@ -549,7 +436,15 @@ function renderStatsScreen() {
   statsEl.classList.remove("hidden");
   const t = STACK.length, sec = examStartTime ? Math.floor((Date.now() - examStartTime) / 1000) : 0;
   const { correct, wrong, dk, ns, correctButNotSure } = computeStats(questionState, STACK);
-  const title = currentRoundType === "base" ? "Резултат" : currentRoundType === "reviewWrong" ? "Преглед: грешни" : currentRoundType === "reviewNotSure" ? "Преглед: несигурни" : "Преглед: не знам";
+  const pct = t ? Math.round(correct / t * 100) : 0;
+  const passed = pct >= 72;
+  
+  const titles = {
+    base: "Резултат",
+    reviewWrong: "Преглед: грешни",
+    reviewNotSure: "Преглед: несигурни", 
+    reviewDontKnow: "Преглед: не знам"
+  };
 
   let reviewHtml = "";
   if (baseState && baseStack) {
@@ -562,18 +457,26 @@ function renderStatsScreen() {
     </div>`;
   }
 
-  statsEl.innerHTML = `<h3>${title}</h3>
-    <p><strong>Верни:</strong> ${correct} / ${t} (${t ? Math.round(correct / t * 100) : 0}%)</p>
-    <p>❌ <strong>Грешни:</strong> ${wrong.join(", ") || "—"}</p>
-    <p>⚠️ <strong>Верни, но несигурни:</strong> ${correctButNotSure.join(", ") || "—"}</p>
-    <p>❓ <strong>Не знам:</strong> ${dk.join(", ") || "—"}</p>
-    <p>⏱ <strong>Време:</strong> ${Math.floor(sec / 60)}m ${sec % 60}s</p>
+  statsEl.innerHTML = `
+    <h3>${titles[currentRoundType] || "Резултат"}</h3>
+    <p style="font-size:18px;"><strong>${passed ? "✅ ВЗЕТ" : "❌ НЕ Е ВЗЕТ"}</strong> (мин. 72%)</p>
+    <p><strong>Верни:</strong> ${correct} / ${t} (${pct}%)</p>
+    <p>❌ <strong>Грешни:</strong> ${wrong.length > 0 ? wrong.join(", ") : "—"}</p>
+    <p>⚠️ <strong>Верни, но несигурни:</strong> ${correctButNotSure.length > 0 ? correctButNotSure.join(", ") : "—"}</p>
+    <p>❓ <strong>Не знам:</strong> ${dk.length > 0 ? dk.join(", ") : "—"}</p>
+    <p>⏱ <strong>Време:</strong> ${Math.floor(sec / 60)}m ${sec % 60}s (средно ${t ? Math.round(sec / t) : 0}s/въпрос)</p>
     ${reviewHtml}`;
 
   document.getElementById("reviewWrongBtn")?.addEventListener("click", () => startRound("reviewWrong", computeStats(baseState, baseStack).wrong));
   document.getElementById("reviewNotSureBtn")?.addEventListener("click", () => startRound("reviewNotSure", computeStats(baseState, baseStack).ns));
   document.getElementById("reviewDontKnowBtn")?.addEventListener("click", () => startRound("reviewDontKnow", computeStats(baseState, baseStack).dk));
-  document.getElementById("backToBaseResultsBtn")?.addEventListener("click", () => { currentRoundType = "base"; questionState = deepClone(baseState); STACK = baseStack.slice(); examStartTime = null; renderStatsScreen(); });
+  document.getElementById("backToBaseResultsBtn")?.addEventListener("click", () => { 
+    currentRoundType = "base"; 
+    questionState = deepClone(baseState); 
+    STACK = baseStack.slice(); 
+    examStartTime = null; 
+    renderStatsScreen(); 
+  });
 }
 </script>
 </body>
