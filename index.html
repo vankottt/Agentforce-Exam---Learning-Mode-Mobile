@@ -271,6 +271,13 @@ function startTimer() {
 }
 
 shuffleBtn.addEventListener("click", () => {
+  // If already have exams, just toggle visibility
+  if (EXAMS.length > 0) {
+    examButtonsEl.classList.toggle("hidden");
+    return;
+  }
+  
+  // First click - generate exams
   const s = shuffle([...ALL_QIDS]);
   EXAMS = [];
   const size = Math.ceil(s.length / 5);
