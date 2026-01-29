@@ -49,7 +49,7 @@
 
   #helpToggle { color: #666; font-size: 14px; cursor: pointer; padding: 8px 0; display: inline-block; }
 
-  #helpBox {
+  #helpBox, #modeSelector {
     border: 1px solid #e0e0e0;
     padding: 12px;
     font-size: 14px;
@@ -59,10 +59,21 @@
     border-radius: 8px;
   }
 
+  #modeSelector h4 { margin: 0 0 10px 0; font-size: 15px; color: #333; }
+  .mode-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+  .mode-buttons button { flex: 1; min-width: 140px; }
+  .mode-buttons button.active { background: #007bff; color: #fff; border-color: #007bff; }
+  
+  #examButtons { display: flex; flex-wrap: wrap; gap: 8px; }
+  #examButtons button { flex: 1; min-width: calc(50% - 8px); }
+
   #helpBox > div { display: flex; flex-direction: column; gap: 6px; }
 
   .question-header { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
   #counter { font-weight: 600; font-size: 15px; color: #333; margin: 0; }
+  #modeIndicator { font-size: 13px; padding: 4px 8px; border-radius: 4px; display: inline-block; }
+  #modeIndicator.learning { background: #d4edda; color: #155724; }
+  #modeIndicator.exam { background: #fff3cd; color: #856404; }
 
   .confidence-panel {
     border: 1px solid #e0e0e0;
@@ -146,9 +157,6 @@
   #nextBtn { background: #007bff; color: #fff; border-color: #007bff; }
   #nextBtn:active { background: #0056b3; }
 
-  #examButtons { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-  #examButtons button { flex: 1; min-width: calc(50% - 8px); }
-
   #stats { padding: 16px; background: #f9f9f9; border-radius: 10px; }
   #stats h3 { margin: 0 0 12px 0; font-size: 1.2rem; }
   #stats p { margin: 8px 0; font-size: 15px; line-height: 1.5; word-break: break-word; }
@@ -184,13 +192,24 @@
 
 <button id="shuffleBtn" disabled>🔀 Разбъркай въпросите</button>
 
-<div id="examButtons" class="hidden"></div>
+<div id="modeSelector" class="hidden">
+  <h4>Избери режим:</h4>
+  <div class="mode-buttons">
+    <button id="learningModeBtn" class="active">📚 Learning Mode</button>
+    <button id="examModeBtn">📝 Exam Mode</button>
+  </div>
+  <p id="modeDescription">Виждаш верния отговор веднага след всеки въпрос.</p>
+  <div id="examButtons"></div>
+</div>
 
 <hr>
 
 <div id="exam" class="hidden">
   <div class="question-header">
-    <p id="counter"></p>
+    <div>
+      <p id="counter"></p>
+      <span id="modeIndicator"></span>
+    </div>
     <div class="confidence-panel">
       <label><input type="checkbox" id="dontKnow"> ❓ Не знам</label>
       <label><input type="checkbox" id="notSure"> ⚠️ Не съм сигурен</label>
@@ -213,22 +232,28 @@
 <div id="stats" class="hidden"></div>
 
 <script>
-const examButtonsEl = document.getElementById("examButtons");
-const examEl = document.getElementById("exam");
-const timerEl = document.getElementById("timer");
-const statsEl = document.getElementById("stats");
-const helpBoxEl = document.getElementById("helpBox");
-const helpToggleEl = document.getElementById("helpToggle");
-const counterEl = document.getElementById("counter");
-const questionEl = document.getElementById("question");
-const answersEl = document.getElementById("answers");
-const dontKnowEl = document.getElementById("dontKnow");
-const notSureEl = document.getElementById("notSure");
-const resultLineEl = document.getElementById("resultLine");
-const shuffleBtn = document.getElementById("shuffleBtn");
-const backBtn = document.getElementById("backBtn");
-const nextBtn = document.getElementById("nextBtn");
-const loadStatusEl = document.getElementById("loadStatus");
+const $ = id => document.getElementById(id);
+const modeSelectorEl = $("modeSelector");
+const examButtonsEl = $("examButtons");
+const examEl = $("exam");
+const timerEl = $("timer");
+const statsEl = $("stats");
+const helpBoxEl = $("helpBox");
+const helpToggleEl = $("helpToggle");
+const counterEl = $("counter");
+const modeIndicatorEl = $("modeIndicator");
+const questionEl = $("question");
+const answersEl = $("answers");
+const dontKnowEl = $("dontKnow");
+const notSureEl = $("notSure");
+const resultLineEl = $("resultLine");
+const shuffleBtn = $("shuffleBtn");
+const backBtn = $("backBtn");
+const nextBtn = $("nextBtn");
+const loadStatusEl = $("loadStatus");
+const learningModeBtn = $("learningModeBtn");
+const examModeBtn = $("examModeBtn");
+const modeDescriptionEl = $("modeDescription");
 
 let QUESTIONS = {}, ALL_QIDS = [], EXAMS = [], STACK = [], index = 0;
 let questionState = {}, answerOrder = {};
@@ -236,8 +261,9 @@ let baseStack = null, baseState = null;
 let examStartTime = null, timerInterval = null;
 const EXAM_TIME_SECONDS = 105 * 60;
 let currentRoundType = "base";
+let currentMode = "learning"; // "learning" or "exam"
 
-// Load questions from JSON file
+// Load questions
 fetch("./agentforce_questions.json")
   .then(r => { if (!r.ok) throw new Error("JSON load failed"); return r.json(); })
   .then(d => {
@@ -247,21 +273,57 @@ fetch("./agentforce_questions.json")
     loadStatusEl.style.color = "#28a745";
   })
   .catch(err => {
-    loadStatusEl.textContent = "✗ Грешка при зареждане на въпросите";
+    loadStatusEl.textContent = "✗ Грешка при зареждане";
     loadStatusEl.style.color = "#dc3545";
     console.error(err);
   });
 
 function shuffle(arr) { return arr.map(v => ({ v, r: Math.random() })).sort((a, b) => a.r - b.r).map(x => x.v); }
-function resetTimerUI() { timerEl.innerText = "Time: 105:00"; }
 function deepClone(obj) { return JSON.parse(JSON.stringify(obj)); }
-function getCorrectText(qid) { const q = QUESTIONS[qid]; return q.correct.map(a => q.answers[a]).join(", "); }
+function getCorrectText(qid) { return QUESTIONS[qid].correct.map(a => QUESTIONS[qid].answers[a]).join(", "); }
 function ensureOrderForQid(qid) { if (!answerOrder[qid]) answerOrder[qid] = shuffle(Object.entries(QUESTIONS[qid].answers)); }
 
+// Mode selection
+learningModeBtn.addEventListener("click", () => {
+  currentMode = "learning";
+  learningModeBtn.classList.add("active");
+  examModeBtn.classList.remove("active");
+  modeDescriptionEl.textContent = "Виждаш верния отговор веднага след всеки въпрос.";
+});
+
+examModeBtn.addEventListener("click", () => {
+  currentMode = "exam";
+  examModeBtn.classList.add("active");
+  learningModeBtn.classList.remove("active");
+  modeDescriptionEl.textContent = "Симулация на изпит - резултатите се показват накрая.";
+});
+
+// Shuffle button
+shuffleBtn.addEventListener("click", () => {
+  if (EXAMS.length > 0) {
+    modeSelectorEl.classList.toggle("hidden");
+    return;
+  }
+  
+  const s = shuffle([...ALL_QIDS]);
+  EXAMS = [];
+  const size = Math.ceil(s.length / 5);
+  for (let i = 0; i < 5; i++) EXAMS.push(s.slice(i * size, (i + 1) * size));
+  
+  examButtonsEl.innerHTML = EXAMS.map((e, i) => `<button data-exam="${i}">Изпит ${i + 1} (${e.length})</button>`).join("");
+  modeSelectorEl.classList.remove("hidden");
+});
+
+examButtonsEl.addEventListener("click", e => {
+  const btn = e.target.closest("button");
+  if (btn) startRound("base", EXAMS[Number(btn.dataset.exam)]);
+});
+
+// Timer
 function startTimer() {
   clearInterval(timerInterval);
   examStartTime = Date.now();
-  resetTimerUI();
+  timerEl.innerText = "Time: 105:00";
   timerInterval = setInterval(() => {
     const elapsed = Math.floor((Date.now() - examStartTime) / 1000);
     const remaining = Math.max(EXAM_TIME_SECONDS - elapsed, 0);
@@ -270,28 +332,6 @@ function startTimer() {
   }, 1000);
 }
 
-shuffleBtn.addEventListener("click", () => {
-  // If already have exams, just toggle visibility
-  if (EXAMS.length > 0) {
-    examButtonsEl.classList.toggle("hidden");
-    return;
-  }
-  
-  // First click - generate exams
-  const s = shuffle([...ALL_QIDS]);
-  EXAMS = [];
-  const size = Math.ceil(s.length / 5);
-  for (let i = 0; i < 5; i++) EXAMS.push(s.slice(i * size, (i + 1) * size));
-  
-  examButtonsEl.innerHTML = EXAMS.map((_, i) => `<button data-exam="${i}">Изпит ${i + 1} (${EXAMS[i].length})</button>`).join("");
-  examButtonsEl.classList.remove("hidden");
-});
-
-examButtonsEl.addEventListener("click", e => {
-  const btn = e.target.closest("button");
-  if (btn) startRound("base", EXAMS[Number(btn.dataset.exam)]);
-});
-
 function startRound(roundType, stack) {
   if (!stack || !stack.length) return;
   currentRoundType = roundType;
@@ -299,10 +339,15 @@ function startRound(roundType, stack) {
   index = 0;
   questionState = {};
   answerOrder = {};
+  modeSelectorEl.classList.add("hidden");
   helpBoxEl.classList.add("hidden");
   statsEl.classList.add("hidden");
   examEl.classList.remove("hidden");
   timerEl.classList.remove("hidden");
+  
+  modeIndicatorEl.textContent = currentMode === "learning" ? "📚 Learning" : "📝 Exam";
+  modeIndicatorEl.className = currentMode;
+  
   startTimer();
   showQuestion();
 }
@@ -316,6 +361,8 @@ function showQuestion() {
   questionEl.innerText = q.question;
   answersEl.innerHTML = "";
   resultLineEl.innerHTML = "";
+  resultLineEl.style.background = "";
+  resultLineEl.style.color = "";
 
   dontKnowEl.checked = state?.dontKnow || false;
   notSureEl.checked = state?.notSure || false;
@@ -329,7 +376,8 @@ function showQuestion() {
     if (r) r.checked = true;
   }
 
-  if (state && state.status && state.status !== "unanswered") {
+  // Learning mode: show feedback if already answered
+  if (currentMode === "learning" && state && state.status && state.status !== "unanswered") {
     document.querySelectorAll('input[name="answer"]').forEach(r => r.disabled = true);
     dontKnowEl.disabled = true;
     notSureEl.disabled = true;
@@ -349,14 +397,12 @@ function showQuestion() {
     document.querySelectorAll('input[name="answer"]').forEach(r => r.disabled = false);
     dontKnowEl.disabled = false;
     notSureEl.disabled = false;
-    resultLineEl.style.background = "";
-    resultLineEl.style.color = "";
   }
 }
 
 function upsertDraftState() {
   const qid = STACK[index], existing = questionState[qid];
-  if (existing && existing.status && existing.status !== "unanswered") return;
+  if (currentMode === "learning" && existing && existing.status && existing.status !== "unanswered") return;
   const sel = document.querySelector('input[name="answer"]:checked');
   questionState[qid] = {
     selectedAnswer: sel ? sel.value : (existing?.selectedAnswer || null),
@@ -380,25 +426,38 @@ notSureEl.addEventListener("change", upsertDraftState);
 function checkCurrentQuestion() {
   const qid = STACK[index], q = QUESTIONS[qid];
   const sel = document.querySelector('input[name="answer"]:checked');
-  if (!sel) return;
+  if (!sel) return false;
   questionState[qid] = {
     selectedAnswer: sel.value,
     status: q.correct.includes(sel.value) ? "correct" : "wrong",
     dontKnow: dontKnowEl.checked,
     notSure: notSureEl.checked
   };
-  showQuestion();
+  return true;
 }
 
 function nextAction() {
-  const state = questionState[STACK[index]];
-  if (!state || state.status === "unanswered") {
-    if (!document.querySelector('input[name="answer"]:checked')) return;
+  const qid = STACK[index];
+  const state = questionState[qid];
+  const sel = document.querySelector('input[name="answer"]:checked');
+  
+  if (!sel) return;
+
+  if (currentMode === "learning") {
+    // Learning: first click checks, second click advances
+    if (!state || state.status === "unanswered") {
+      checkCurrentQuestion();
+      showQuestion();
+      return;
+    }
+    if (index < STACK.length - 1) { index++; showQuestion(); }
+    else finishExam();
+  } else {
+    // Exam: just save and advance
     checkCurrentQuestion();
-    return;
+    if (index < STACK.length - 1) { index++; showQuestion(); }
+    else finishExam();
   }
-  if (index < STACK.length - 1) { index++; showQuestion(); }
-  else finishExam();
 }
 
 function goBack() { if (index > 0) { index--; showQuestion(); } }
@@ -446,15 +505,11 @@ function renderStatsScreen() {
   const pct = t ? Math.round(correct / t * 100) : 0;
   const passed = pct >= 72;
   
-  const titles = {
-    base: "Резултат",
-    reviewWrong: "Преглед: грешни",
-    reviewNotSure: "Преглед: несигурни", 
-    reviewDontKnow: "Преглед: не знам"
-  };
+  const modeLabel = currentMode === "learning" ? "📚 Learning Mode" : "📝 Exam Mode";
+  const titles = { base: "Резултат", reviewWrong: "Преглед: грешни", reviewNotSure: "Преглед: несигурни", reviewDontKnow: "Преглед: не знам" };
 
   let reviewHtml = "";
-  if (baseState && baseStack) {
+  if (baseState && baseStack && currentMode === "learning") {
     const bs = computeStats(baseState, baseStack);
     reviewHtml = `<div id="reviewButtons">
       <button id="reviewWrongBtn" ${bs.wrong.length ? "" : "disabled"}>🔁 Грешни (${bs.wrong.length})</button>
@@ -465,7 +520,7 @@ function renderStatsScreen() {
   }
 
   statsEl.innerHTML = `
-    <h3>${titles[currentRoundType] || "Резултат"}</h3>
+    <h3>${titles[currentRoundType] || "Резултат"} <small style="font-weight:normal;color:#666;">(${modeLabel})</small></h3>
     <p style="font-size:18px;"><strong>${passed ? "✅ ВЗЕТ" : "❌ НЕ Е ВЗЕТ"}</strong> (мин. 72%)</p>
     <p><strong>Верни:</strong> ${correct} / ${t} (${pct}%)</p>
     <p>❌ <strong>Грешни:</strong> ${wrong.length > 0 ? wrong.join(", ") : "—"}</p>
@@ -474,16 +529,18 @@ function renderStatsScreen() {
     <p>⏱ <strong>Време:</strong> ${Math.floor(sec / 60)}m ${sec % 60}s (средно ${t ? Math.round(sec / t) : 0}s/въпрос)</p>
     ${reviewHtml}`;
 
-  document.getElementById("reviewWrongBtn")?.addEventListener("click", () => startRound("reviewWrong", computeStats(baseState, baseStack).wrong));
-  document.getElementById("reviewNotSureBtn")?.addEventListener("click", () => startRound("reviewNotSure", computeStats(baseState, baseStack).ns));
-  document.getElementById("reviewDontKnowBtn")?.addEventListener("click", () => startRound("reviewDontKnow", computeStats(baseState, baseStack).dk));
-  document.getElementById("backToBaseResultsBtn")?.addEventListener("click", () => { 
-    currentRoundType = "base"; 
-    questionState = deepClone(baseState); 
-    STACK = baseStack.slice(); 
-    examStartTime = null; 
-    renderStatsScreen(); 
-  });
+  if (currentMode === "learning") {
+    $("reviewWrongBtn")?.addEventListener("click", () => startRound("reviewWrong", computeStats(baseState, baseStack).wrong));
+    $("reviewNotSureBtn")?.addEventListener("click", () => startRound("reviewNotSure", computeStats(baseState, baseStack).ns));
+    $("reviewDontKnowBtn")?.addEventListener("click", () => startRound("reviewDontKnow", computeStats(baseState, baseStack).dk));
+    $("backToBaseResultsBtn")?.addEventListener("click", () => { 
+      currentRoundType = "base"; 
+      questionState = deepClone(baseState); 
+      STACK = baseStack.slice(); 
+      examStartTime = null; 
+      renderStatsScreen(); 
+    });
+  }
 }
 </script>
 </body>
