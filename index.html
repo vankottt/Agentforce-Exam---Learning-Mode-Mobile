@@ -282,7 +282,8 @@
 <div id="examUI" class="hidden">
   <div id="timer">Time: 105:00</div>
   
-  <div id="helpToggle">🛈 Помощ / Клавиши</div>
+  <button id="exitBtn" style="margin-bottom:10px;">✕ Смени изпит</button>
+  <span id="helpToggle">🛈 Помощ</span>
   <div id="helpBox" class="hidden">
     <div>
       <div>🔢 <b>1–4</b> – избор на отговор</div>
@@ -435,6 +436,22 @@ examButtonsEl.addEventListener("click", e => {
 startBtn.addEventListener("click", () => {
   if (selectedExamIndex === null || !currentMode) return;
   startRound("base", EXAMS[selectedExamIndex]);
+});
+
+const exitBtn = $("exitBtn");
+
+// Exit to setup
+exitBtn.addEventListener("click", () => {
+  if (!confirm("Сигурен ли си? Прогресът ще бъде загубен.")) return;
+  clearInterval(timerInterval);
+  examUI.classList.add("hidden");
+  setupPanel.classList.remove("hidden");
+  // Reset for new exam selection
+  selectedExamIndex = null;
+  examButtonsEl.querySelectorAll("button").forEach(b => b.classList.remove("selected"));
+  step3num.classList.remove("done");
+  step3num.classList.add("active");
+  startBtn.disabled = true;
 });
 
 // Timer
