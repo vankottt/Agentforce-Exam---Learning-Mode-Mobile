@@ -266,6 +266,7 @@
     <div class="step-header">
       <div class="step-number" id="step3num">3</div>
       <div class="step-title">Избери изпит</div>
+      <button id="reshuffleBtn" class="hidden" style="margin-left:auto;padding:8px 12px;font-size:14px;">🔀 Разбъркай пак</button>
     </div>
     <div id="examButtons"></div>
     <div id="examPlaceholder" style="color:#999;font-size:14px;">Първо избери режим.</div>
@@ -383,6 +384,8 @@ function deepClone(obj) { return JSON.parse(JSON.stringify(obj)); }
 function getCorrectText(qid) { return QUESTIONS[qid].correct.map(a => QUESTIONS[qid].answers[a]).join(", "); }
 function ensureOrderForQid(qid) { if (!answerOrder[qid]) answerOrder[qid] = shuffle(Object.entries(QUESTIONS[qid].answers)); }
 
+const reshuffleBtn = $("reshuffleBtn");
+
 // Step 2: Mode selection
 function selectMode(mode) {
   currentMode = mode;
@@ -413,10 +416,20 @@ function generateExams() {
   for (let i = 0; i < 5; i++) EXAMS.push(s.slice(i * size, (i + 1) * size));
   
   examPlaceholder.classList.add("hidden");
+  reshuffleBtn.classList.remove("hidden");
+  selectedExamIndex = null;
+  startBtn.disabled = true;
+  
   examButtonsEl.innerHTML = EXAMS.map((e, i) => 
     `<button data-exam="${i}">Изпит ${i + 1} (${e.length} въпр.)</button>`
   ).join("");
 }
+
+reshuffleBtn.addEventListener("click", () => {
+  generateExams();
+  step3num.classList.remove("done");
+  step3num.classList.add("active");
+});
 
 examButtonsEl.addEventListener("click", e => {
   const btn = e.target.closest("button");
