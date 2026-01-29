@@ -284,6 +284,7 @@
 <body>
 
 <h2>Agentforce Exam</h2>
+<div id="loadStatus" style="font-size:14px;color:#666;margin-bottom:8px;">⏳ Зареждане на въпросите...</div>
 <div id="timer" class="hidden">Time: 105:00</div>
 
 <div id="helpToggle">🛈 Помощ / Клавиши</div>
@@ -349,15 +350,20 @@ let examStartTime = null, timerInterval = null;
 const EXAM_TIME_SECONDS = 105 * 60;
 let currentRoundType = "base";
 
-// Demo questions for testing
-const demoQuestions = [
-  { number: 1, question: "What is Agentforce primarily used for?", answers: { A: "Building AI agents", B: "Managing databases", C: "Email marketing", D: "Video editing" }, correct: ["A"] },
-  { number: 2, question: "Which Salesforce product integrates with Agentforce?", answers: { A: "Tableau", B: "Service Cloud", C: "Slack", D: "All of the above" }, correct: ["D"] },
-  { number: 3, question: "What programming knowledge is needed for Agentforce?", answers: { A: "Advanced Python", B: "No coding required", C: "Java only", D: "C++" }, correct: ["B"] }
-];
-
-demoQuestions.forEach(q => { QUESTIONS[q.number] = q; ALL_QIDS.push(q.number); });
-shuffleBtn.disabled = false;
+// Load questions from JSON file
+fetch("./agentforce_questions.json")
+  .then(r => { if (!r.ok) throw new Error("JSON load failed"); return r.json(); })
+  .then(d => {
+    d.questions.forEach(q => { QUESTIONS[q.number] = q; ALL_QIDS.push(q.number); });
+    shuffleBtn.disabled = false;
+    document.getElementById("loadStatus").textContent = `✓ Заредени ${ALL_QIDS.length} въпроса`;
+    document.getElementById("loadStatus").style.color = "#28a745";
+  })
+  .catch(err => {
+    document.getElementById("loadStatus").textContent = "✗ Грешка при зареждане на въпросите";
+    document.getElementById("loadStatus").style.color = "#dc3545";
+    console.error(err);
+  });
 
 function shuffle(arr) { return arr.map(v => ({ v, r: Math.random() })).sort((a, b) => a.r - b.r).map(x => x.v); }
 function resetTimerUI() { timerEl.innerText = "Time: 105:00"; }
