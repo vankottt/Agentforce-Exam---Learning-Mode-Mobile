@@ -17,7 +17,7 @@
     background: #fff;
   }
 
-  h2 { font-size: 1.4rem; margin: 0 0 10px 0; }
+  h2 { font-size: 1.4rem; margin: 0 0 12px 0; }
 
   button {
     padding: 12px 16px;
@@ -27,15 +27,74 @@
     background: #f5f5f5;
     cursor: pointer;
     touch-action: manipulation;
-    margin: 4px;
   }
 
   button:active { background: #e0e0e0; }
-  button:disabled { opacity: 0.5; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
   .hidden { display: none; }
 
-  #loadStatus { font-size: 14px; color: #666; margin-bottom: 8px; }
+  /* Setup Panel */
+  #setupPanel {
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 16px;
+    background: #fafafa;
+  }
 
+  .setup-step {
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .setup-step:last-child { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
+
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .step-number {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #ddd;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .step-number.done { background: #28a745; color: #fff; }
+  .step-number.active { background: #007bff; color: #fff; }
+
+  .step-title { font-weight: 600; font-size: 15px; color: #333; }
+
+  .mode-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+  .mode-buttons button { flex: 1; min-width: 140px; padding: 14px 16px; }
+  .mode-buttons button.selected { background: #007bff; color: #fff; border-color: #007bff; }
+
+  .mode-desc { font-size: 13px; color: #666; margin-top: 8px; }
+
+  #examButtons { display: flex; flex-wrap: wrap; gap: 8px; }
+  #examButtons button { flex: 1; min-width: calc(50% - 4px); }
+
+  #startBtn { 
+    width: 100%; 
+    padding: 16px; 
+    font-size: 18px; 
+    font-weight: 600;
+    background: #28a745; 
+    color: #fff; 
+    border-color: #28a745; 
+  }
+  #startBtn:active { background: #1e7e34; }
+
+  /* Timer & Help */
   #timer {
     color: #555;
     font-size: 15px;
@@ -49,7 +108,7 @@
 
   #helpToggle { color: #666; font-size: 14px; cursor: pointer; padding: 8px 0; display: inline-block; }
 
-  #helpBox, #modeSelector {
+  #helpBox {
     border: 1px solid #e0e0e0;
     padding: 12px;
     font-size: 14px;
@@ -59,19 +118,19 @@
     border-radius: 8px;
   }
 
-  #modeSelector h4 { margin: 0 0 10px 0; font-size: 15px; color: #333; }
-  .mode-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
-  .mode-buttons button { flex: 1; min-width: 140px; }
-  .mode-buttons button.active { background: #007bff; color: #fff; border-color: #007bff; }
-  
-  #examButtons { display: flex; flex-wrap: wrap; gap: 8px; }
-  #examButtons button { flex: 1; min-width: calc(50% - 8px); }
-
   #helpBox > div { display: flex; flex-direction: column; gap: 6px; }
 
+  /* Exam UI */
   .question-header { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
   #counter { font-weight: 600; font-size: 15px; color: #333; margin: 0; }
-  #modeIndicator { font-size: 13px; padding: 4px 8px; border-radius: 4px; display: inline-block; }
+  
+  #modeIndicator { 
+    font-size: 12px; 
+    padding: 4px 8px; 
+    border-radius: 4px; 
+    display: inline-block;
+    margin-top: 4px;
+  }
   #modeIndicator.learning { background: #d4edda; color: #155724; }
   #modeIndicator.exam { background: #fff3cd; color: #856404; }
 
@@ -157,14 +216,12 @@
   #nextBtn { background: #007bff; color: #fff; border-color: #007bff; }
   #nextBtn:active { background: #0056b3; }
 
-  #stats { padding: 16px; background: #f9f9f9; border-radius: 10px; }
+  #stats { padding: 16px; background: #f9f9f9; border-radius: 10px; margin-top: 12px; }
   #stats h3 { margin: 0 0 12px 0; font-size: 1.2rem; }
   #stats p { margin: 8px 0; font-size: 15px; line-height: 1.5; word-break: break-word; }
 
   #reviewButtons { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
   #reviewButtons button { width: 100%; text-align: left; padding: 14px 16px; }
-
-  hr { border: none; border-top: 1px solid #e0e0e0; margin: 12px 0; }
 
   @media (min-width: 600px) {
     body { padding: 20px; }
@@ -178,33 +235,62 @@
 <body>
 
 <h2>Agentforce Exam</h2>
-<div id="loadStatus">⏳ Зареждане на въпросите...</div>
-<div id="timer" class="hidden">Time: 105:00</div>
 
-<div id="helpToggle">🛈 Помощ / Клавиши</div>
-<div id="helpBox" class="hidden">
-  <div>
-    <div>🔢 <b>1–4</b> – избор на отговор</div>
-    <div>➡️ <b>→ / Enter</b> – Next</div>
-    <div>⬅️ <b>←</b> – Back</div>
+<!-- SETUP PANEL -->
+<div id="setupPanel">
+  
+  <!-- Step 1: Load -->
+  <div class="setup-step">
+    <div class="step-header">
+      <div class="step-number" id="step1num">1</div>
+      <div class="step-title">Зареждане на въпроси</div>
+    </div>
+    <div id="loadStatus">⏳ Зареждане...</div>
   </div>
+
+  <!-- Step 2: Mode -->
+  <div class="setup-step">
+    <div class="step-header">
+      <div class="step-number" id="step2num">2</div>
+      <div class="step-title">Избери режим</div>
+    </div>
+    <div class="mode-buttons">
+      <button id="learningModeBtn" disabled>📚 Learning</button>
+      <button id="examModeBtn" disabled>📝 Exam</button>
+    </div>
+    <div class="mode-desc" id="modeDesc">Първо изчакай въпросите да се заредят.</div>
+  </div>
+
+  <!-- Step 3: Exam -->
+  <div class="setup-step">
+    <div class="step-header">
+      <div class="step-number" id="step3num">3</div>
+      <div class="step-title">Избери изпит</div>
+    </div>
+    <div id="examButtons"></div>
+    <div id="examPlaceholder" style="color:#999;font-size:14px;">Първо избери режим.</div>
+  </div>
+
+  <!-- Step 4: Start -->
+  <div class="setup-step">
+    <button id="startBtn" disabled>▶️ Старт</button>
+  </div>
+
 </div>
 
-<button id="shuffleBtn" disabled>🔀 Разбъркай въпросите</button>
-
-<div id="modeSelector" class="hidden">
-  <h4>Избери режим:</h4>
-  <div class="mode-buttons">
-    <button id="learningModeBtn" class="active">📚 Learning Mode</button>
-    <button id="examModeBtn">📝 Exam Mode</button>
+<!-- EXAM UI -->
+<div id="examUI" class="hidden">
+  <div id="timer">Time: 105:00</div>
+  
+  <div id="helpToggle">🛈 Помощ / Клавиши</div>
+  <div id="helpBox" class="hidden">
+    <div>
+      <div>🔢 <b>1–4</b> – избор на отговор</div>
+      <div>➡️ <b>→ / Enter</b> – Next</div>
+      <div>⬅️ <b>←</b> – Back</div>
+    </div>
   </div>
-  <p id="modeDescription">Виждаш верния отговор веднага след всеки въпрос.</p>
-  <div id="examButtons"></div>
-</div>
 
-<hr>
-
-<div id="exam" class="hidden">
   <div class="question-header">
     <div>
       <p id="counter"></p>
@@ -233,9 +319,10 @@
 
 <script>
 const $ = id => document.getElementById(id);
-const modeSelectorEl = $("modeSelector");
-const examButtonsEl = $("examButtons");
-const examEl = $("exam");
+
+// DOM refs
+const setupPanel = $("setupPanel");
+const examUI = $("examUI");
 const timerEl = $("timer");
 const statsEl = $("stats");
 const helpBoxEl = $("helpBox");
@@ -247,76 +334,107 @@ const answersEl = $("answers");
 const dontKnowEl = $("dontKnow");
 const notSureEl = $("notSure");
 const resultLineEl = $("resultLine");
-const shuffleBtn = $("shuffleBtn");
 const backBtn = $("backBtn");
 const nextBtn = $("nextBtn");
 const loadStatusEl = $("loadStatus");
 const learningModeBtn = $("learningModeBtn");
 const examModeBtn = $("examModeBtn");
-const modeDescriptionEl = $("modeDescription");
+const modeDescEl = $("modeDesc");
+const examButtonsEl = $("examButtons");
+const examPlaceholder = $("examPlaceholder");
+const startBtn = $("startBtn");
+const step1num = $("step1num");
+const step2num = $("step2num");
+const step3num = $("step3num");
 
+// State
 let QUESTIONS = {}, ALL_QIDS = [], EXAMS = [], STACK = [], index = 0;
 let questionState = {}, answerOrder = {};
 let baseStack = null, baseState = null;
 let examStartTime = null, timerInterval = null;
 const EXAM_TIME_SECONDS = 105 * 60;
 let currentRoundType = "base";
-let currentMode = "learning"; // "learning" or "exam"
+let currentMode = null; // "learning" or "exam"
+let selectedExamIndex = null;
 
 // Load questions
 fetch("./agentforce_questions.json")
   .then(r => { if (!r.ok) throw new Error("JSON load failed"); return r.json(); })
   .then(d => {
     d.questions.forEach(q => { QUESTIONS[q.number] = q; ALL_QIDS.push(q.number); });
-    shuffleBtn.disabled = false;
-    loadStatusEl.textContent = `✓ Заредени ${ALL_QIDS.length} въпроса`;
+    loadStatusEl.textContent = `✅ Заредени ${ALL_QIDS.length} въпроса`;
     loadStatusEl.style.color = "#28a745";
+    step1num.classList.add("done");
+    step2num.classList.add("active");
+    learningModeBtn.disabled = false;
+    examModeBtn.disabled = false;
+    modeDescEl.textContent = "Избери как искаш да се упражняваш.";
   })
   .catch(err => {
-    loadStatusEl.textContent = "✗ Грешка при зареждане";
+    loadStatusEl.textContent = "❌ Грешка при зареждане";
     loadStatusEl.style.color = "#dc3545";
     console.error(err);
   });
 
+// Helpers
 function shuffle(arr) { return arr.map(v => ({ v, r: Math.random() })).sort((a, b) => a.r - b.r).map(x => x.v); }
 function deepClone(obj) { return JSON.parse(JSON.stringify(obj)); }
 function getCorrectText(qid) { return QUESTIONS[qid].correct.map(a => QUESTIONS[qid].answers[a]).join(", "); }
 function ensureOrderForQid(qid) { if (!answerOrder[qid]) answerOrder[qid] = shuffle(Object.entries(QUESTIONS[qid].answers)); }
 
-// Mode selection
-learningModeBtn.addEventListener("click", () => {
-  currentMode = "learning";
-  learningModeBtn.classList.add("active");
-  examModeBtn.classList.remove("active");
-  modeDescriptionEl.textContent = "Виждаш верния отговор веднага след всеки въпрос.";
-});
-
-examModeBtn.addEventListener("click", () => {
-  currentMode = "exam";
-  examModeBtn.classList.add("active");
-  learningModeBtn.classList.remove("active");
-  modeDescriptionEl.textContent = "Симулация на изпит - резултатите се показват накрая.";
-});
-
-// Shuffle button
-shuffleBtn.addEventListener("click", () => {
-  if (EXAMS.length > 0) {
-    modeSelectorEl.classList.toggle("hidden");
-    return;
+// Step 2: Mode selection
+function selectMode(mode) {
+  currentMode = mode;
+  learningModeBtn.classList.toggle("selected", mode === "learning");
+  examModeBtn.classList.toggle("selected", mode === "exam");
+  
+  if (mode === "learning") {
+    modeDescEl.textContent = "📚 Виждаш верния отговор веднага. Можеш да преговаряш грешките.";
+  } else {
+    modeDescEl.textContent = "📝 Симулация на изпит. Резултатите се показват накрая.";
   }
   
+  step2num.classList.remove("active");
+  step2num.classList.add("done");
+  step3num.classList.add("active");
+  
+  generateExams();
+}
+
+learningModeBtn.addEventListener("click", () => selectMode("learning"));
+examModeBtn.addEventListener("click", () => selectMode("exam"));
+
+// Step 3: Generate exams
+function generateExams() {
   const s = shuffle([...ALL_QIDS]);
   EXAMS = [];
   const size = Math.ceil(s.length / 5);
   for (let i = 0; i < 5; i++) EXAMS.push(s.slice(i * size, (i + 1) * size));
   
-  examButtonsEl.innerHTML = EXAMS.map((e, i) => `<button data-exam="${i}">Изпит ${i + 1} (${e.length})</button>`).join("");
-  modeSelectorEl.classList.remove("hidden");
-});
+  examPlaceholder.classList.add("hidden");
+  examButtonsEl.innerHTML = EXAMS.map((e, i) => 
+    `<button data-exam="${i}">Изпит ${i + 1} (${e.length} въпр.)</button>`
+  ).join("");
+}
 
 examButtonsEl.addEventListener("click", e => {
   const btn = e.target.closest("button");
-  if (btn) startRound("base", EXAMS[Number(btn.dataset.exam)]);
+  if (!btn) return;
+  
+  // Deselect all, select clicked
+  examButtonsEl.querySelectorAll("button").forEach(b => b.classList.remove("selected"));
+  btn.classList.add("selected");
+  
+  selectedExamIndex = Number(btn.dataset.exam);
+  step3num.classList.remove("active");
+  step3num.classList.add("done");
+  startBtn.disabled = false;
+});
+
+// Step 4: Start
+startBtn.addEventListener("click", () => {
+  if (selectedExamIndex === null || !currentMode) return;
+  startRound("base", EXAMS[selectedExamIndex]);
 });
 
 // Timer
@@ -339,11 +457,10 @@ function startRound(roundType, stack) {
   index = 0;
   questionState = {};
   answerOrder = {};
-  modeSelectorEl.classList.add("hidden");
-  helpBoxEl.classList.add("hidden");
+  
+  setupPanel.classList.add("hidden");
   statsEl.classList.add("hidden");
-  examEl.classList.remove("hidden");
-  timerEl.classList.remove("hidden");
+  examUI.classList.remove("hidden");
   
   modeIndicatorEl.textContent = currentMode === "learning" ? "📚 Learning" : "📝 Exam";
   modeIndicatorEl.className = currentMode;
@@ -444,7 +561,6 @@ function nextAction() {
   if (!sel) return;
 
   if (currentMode === "learning") {
-    // Learning: first click checks, second click advances
     if (!state || state.status === "unanswered") {
       checkCurrentQuestion();
       showQuestion();
@@ -453,7 +569,6 @@ function nextAction() {
     if (index < STACK.length - 1) { index++; showQuestion(); }
     else finishExam();
   } else {
-    // Exam: just save and advance
     checkCurrentQuestion();
     if (index < STACK.length - 1) { index++; showQuestion(); }
     else finishExam();
@@ -466,7 +581,7 @@ nextBtn.addEventListener("click", nextAction);
 backBtn.addEventListener("click", goBack);
 
 document.addEventListener("keydown", e => {
-  if (examEl.classList.contains("hidden")) return;
+  if (examUI.classList.contains("hidden")) return;
   if (["1", "2", "3", "4"].includes(e.key)) {
     const radios = document.querySelectorAll('input[name="answer"]');
     if (radios[e.key - 1] && !radios[e.key - 1].disabled) { radios[e.key - 1].checked = true; upsertDraftState(); }
@@ -492,20 +607,19 @@ function computeStats(stateObj, stackArr) {
 
 function finishExam() {
   clearInterval(timerInterval);
-  examEl.classList.add("hidden");
-  timerEl.classList.add("hidden");
+  examUI.classList.add("hidden");
   if (currentRoundType === "base") { baseState = deepClone(questionState); baseStack = STACK.slice(); }
   renderStatsScreen();
 }
 
 function renderStatsScreen() {
   statsEl.classList.remove("hidden");
-  const t = STACK.length, sec = examStartTime ? Math.floor((Date.now() - examStartTime) / 1000) : 0;
+  const t = STACK.length, sec = examStartTime ? Math.floor((Date.Now() - examStartTime) / 1000) : 0;
   const { correct, wrong, dk, ns, correctButNotSure } = computeStats(questionState, STACK);
   const pct = t ? Math.round(correct / t * 100) : 0;
   const passed = pct >= 72;
   
-  const modeLabel = currentMode === "learning" ? "📚 Learning Mode" : "📝 Exam Mode";
+  const modeLabel = currentMode === "learning" ? "📚 Learning" : "📝 Exam";
   const titles = { base: "Резултат", reviewWrong: "Преглед: грешни", reviewNotSure: "Преглед: несигурни", reviewDontKnow: "Преглед: не знам" };
 
   let reviewHtml = "";
@@ -519,6 +633,8 @@ function renderStatsScreen() {
     </div>`;
   }
 
+  let newExamHtml = `<div style="margin-top:16px;"><button id="newExamBtn">🔄 Нов изпит</button></div>`;
+
   statsEl.innerHTML = `
     <h3>${titles[currentRoundType] || "Резултат"} <small style="font-weight:normal;color:#666;">(${modeLabel})</small></h3>
     <p style="font-size:18px;"><strong>${passed ? "✅ ВЗЕТ" : "❌ НЕ Е ВЗЕТ"}</strong> (мин. 72%)</p>
@@ -527,12 +643,31 @@ function renderStatsScreen() {
     <p>⚠️ <strong>Верни, но несигурни:</strong> ${correctButNotSure.length > 0 ? correctButNotSure.join(", ") : "—"}</p>
     <p>❓ <strong>Не знам:</strong> ${dk.length > 0 ? dk.join(", ") : "—"}</p>
     <p>⏱ <strong>Време:</strong> ${Math.floor(sec / 60)}m ${sec % 60}s (средно ${t ? Math.round(sec / t) : 0}s/въпрос)</p>
-    ${reviewHtml}`;
+    ${reviewHtml}
+    ${newExamHtml}`;
+
+  $("newExamBtn")?.addEventListener("click", () => {
+    statsEl.classList.add("hidden");
+    setupPanel.classList.remove("hidden");
+    // Reset steps 2 & 3
+    currentMode = null;
+    selectedExamIndex = null;
+    learningModeBtn.classList.remove("selected");
+    examModeBtn.classList.remove("selected");
+    step2num.classList.remove("done");
+    step2num.classList.add("active");
+    step3num.classList.remove("done", "active");
+    examButtonsEl.innerHTML = "";
+    examPlaceholder.classList.remove("hidden");
+    examPlaceholder.textContent = "Първо избери режим.";
+    startBtn.disabled = true;
+    modeDescEl.textContent = "Избери как искаш да се упражняваш.";
+  });
 
   if (currentMode === "learning") {
-    $("reviewWrongBtn")?.addEventListener("click", () => startRound("reviewWrong", computeStats(baseState, baseStack).wrong));
-    $("reviewNotSureBtn")?.addEventListener("click", () => startRound("reviewNotSure", computeStats(baseState, baseStack).ns));
-    $("reviewDontKnowBtn")?.addEventListener("click", () => startRound("reviewDontKnow", computeStats(baseState, baseStack).dk));
+    $("reviewWrongBtn")?.addEventListener("click", () => { statsEl.classList.add("hidden"); startRound("reviewWrong", computeStats(baseState, baseStack).wrong); });
+    $("reviewNotSureBtn")?.addEventListener("click", () => { statsEl.classList.add("hidden"); startRound("reviewNotSure", computeStats(baseState, baseStack).ns); });
+    $("reviewDontKnowBtn")?.addEventListener("click", () => { statsEl.classList.add("hidden"); startRound("reviewDontKnow", computeStats(baseState, baseStack).dk); });
     $("backToBaseResultsBtn")?.addEventListener("click", () => { 
       currentRoundType = "base"; 
       questionState = deepClone(baseState); 
