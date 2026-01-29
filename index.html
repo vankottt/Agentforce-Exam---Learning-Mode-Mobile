@@ -5,6 +5,32 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Agentforce Exam</title>
 <style>
+  :root {
+    --bg: #fff;
+    --bg2: #fafafa;
+    --bg3: #f0f0f0;
+    --text: #333;
+    --text2: #666;
+    --border: #e0e0e0;
+    --accent: #007bff;
+    --success: #28a745;
+    --danger: #dc3545;
+    --warning: #ffc107;
+  }
+  
+  .dark {
+    --bg: #1a1a2e;
+    --bg2: #16213e;
+    --bg3: #0f3460;
+    --text: #eee;
+    --text2: #aaa;
+    --border: #0f3460;
+    --accent: #4dabf7;
+    --success: #51cf66;
+    --danger: #ff6b6b;
+    --warning: #fcc419;
+  }
+
   * { box-sizing: border-box; }
   
   body {
@@ -14,37 +40,42 @@
     padding: 12px;
     font-size: 16px;
     line-height: 1.5;
-    background: #fff;
+    background: var(--bg);
+    color: var(--text);
+    transition: background 0.3s, color 0.3s;
   }
 
-  h2 { font-size: 1.4rem; margin: 0 0 12px 0; }
+  h2 { font-size: 1.4rem; margin: 0 0 12px 0; display: flex; justify-content: space-between; align-items: center; }
 
   button {
     padding: 12px 16px;
     font-size: 16px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border);
     border-radius: 8px;
-    background: #f5f5f5;
+    background: var(--bg2);
+    color: var(--text);
     cursor: pointer;
     touch-action: manipulation;
   }
 
-  button:active { background: #e0e0e0; }
+  button:active { opacity: 0.8; }
   button:disabled { opacity: 0.5; cursor: not-allowed; }
   .hidden { display: none; }
 
+  #darkModeBtn { padding: 8px 12px; font-size: 14px; }
+
   /* Setup Panel */
   #setupPanel {
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--border);
     border-radius: 12px;
     padding: 16px;
-    background: #fafafa;
+    background: var(--bg2);
   }
 
   .setup-step {
     margin-bottom: 16px;
     padding-bottom: 16px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--border);
   }
 
   .setup-step:last-child { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
@@ -54,14 +85,15 @@
     align-items: center;
     gap: 10px;
     margin-bottom: 10px;
+    flex-wrap: wrap;
   }
 
   .step-number {
     width: 28px;
     height: 28px;
     border-radius: 50%;
-    background: #ddd;
-    color: #666;
+    background: var(--bg3);
+    color: var(--text2);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -69,60 +101,123 @@
     font-size: 14px;
   }
 
-  .step-number.done { background: #28a745; color: #fff; }
-  .step-number.active { background: #007bff; color: #fff; }
+  .step-number.done { background: var(--success); color: #fff; }
+  .step-number.active { background: var(--accent); color: #fff; }
 
-  .step-title { font-weight: 600; font-size: 15px; color: #333; }
+  .step-title { font-weight: 600; font-size: 15px; }
 
   .mode-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
   .mode-buttons button { flex: 1; min-width: 140px; padding: 14px 16px; }
-  .mode-buttons button.selected { background: #007bff; color: #fff; border-color: #007bff; }
+  .mode-buttons button.selected { background: var(--accent); color: #fff; border-color: var(--accent); }
 
-  .mode-desc { font-size: 13px; color: #666; margin-top: 8px; }
+  .mode-desc { font-size: 13px; color: var(--text2); margin-top: 8px; }
 
   #examButtons { display: flex; flex-wrap: wrap; gap: 8px; }
   #examButtons button { flex: 1; min-width: calc(50% - 4px); }
+  #examButtons button.selected { background: var(--accent); color: #fff; }
 
   #startBtn { 
     width: 100%; 
     padding: 16px; 
     font-size: 18px; 
     font-weight: 600;
-    background: #28a745; 
+    background: var(--success); 
     color: #fff; 
-    border-color: #28a745; 
+    border-color: var(--success); 
   }
-  #startBtn:active { background: #1e7e34; }
+
+  /* Stats Panel */
+  #statsPanel {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    background: var(--bg2);
+    margin-bottom: 12px;
+  }
+
+  #statsPanel h3 { margin: 0 0 12px 0; font-size: 16px; display: flex; justify-content: space-between; }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+  }
+
+  .stat-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+  }
+
+  .stat-value { font-size: 24px; font-weight: 700; color: var(--accent); }
+  .stat-label { font-size: 12px; color: var(--text2); margin-top: 4px; }
+
+  .weak-list {
+    margin-top: 12px;
+    padding: 10px;
+    background: var(--bg);
+    border-radius: 8px;
+    font-size: 14px;
+  }
+
+  .weak-list summary { cursor: pointer; font-weight: 600; }
+  .weak-item { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid var(--border); }
+  .weak-item:last-child { border-bottom: none; }
+
+  #historyChart {
+    width: 100%;
+    height: 120px;
+    margin-top: 12px;
+  }
 
   /* Timer & Help */
+  #examHeader { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  
   #timer {
-    color: #555;
+    color: var(--text);
     font-size: 15px;
     font-weight: 600;
     padding: 8px 12px;
-    background: #f0f0f0;
+    background: var(--bg3);
     border-radius: 6px;
-    display: inline-block;
-    margin-bottom: 10px;
   }
 
-  #helpToggle { color: #666; font-size: 14px; cursor: pointer; padding: 8px 0; display: inline-block; }
+  #helpToggle { color: var(--text2); font-size: 14px; cursor: pointer; }
 
   #helpBox {
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--border);
     padding: 12px;
     font-size: 14px;
-    color: #555;
+    color: var(--text2);
     margin-bottom: 12px;
-    background: #fafafa;
+    background: var(--bg2);
     border-radius: 8px;
   }
 
   #helpBox > div { display: flex; flex-direction: column; gap: 6px; }
 
+  /* Progress bar */
+  #progressBar {
+    width: 100%;
+    height: 8px;
+    background: var(--bg3);
+    border-radius: 4px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+
+  #progressFill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.3s;
+  }
+
   /* Exam UI */
   .question-header { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
-  #counter { font-weight: 600; font-size: 15px; color: #333; margin: 0; }
+  #counter { font-weight: 600; font-size: 15px; margin: 0; }
+  #questionTime { font-size: 13px; color: var(--text2); }
   
   #modeIndicator { 
     font-size: 12px; 
@@ -133,10 +228,12 @@
   }
   #modeIndicator.learning { background: #d4edda; color: #155724; }
   #modeIndicator.exam { background: #fff3cd; color: #856404; }
+  .dark #modeIndicator.learning { background: #1e5631; color: #a3e4b7; }
+  .dark #modeIndicator.exam { background: #5c4813; color: #ffeeba; }
 
   .confidence-panel {
-    border: 1px solid #e0e0e0;
-    background: #fafafa;
+    border: 1px solid var(--border);
+    background: var(--bg2);
     padding: 12px;
     font-size: 15px;
     border-radius: 8px;
@@ -149,8 +246,8 @@
   .confidence-panel input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
 
   .question-box {
-    border: 1px solid #e0e0e0;
-    background: #f7f7f7;
+    border: 1px solid var(--border);
+    background: var(--bg2);
     padding: 16px;
     border-radius: 8px;
     margin-bottom: 12px;
@@ -159,8 +256,8 @@
   .question-box p { margin: 0; font-size: 16px; line-height: 1.6; }
 
   .answers-box {
-    border: 1px solid #e0e0e0;
-    background: #fafafa;
+    border: 1px solid var(--border);
+    background: var(--bg2);
     padding: 12px;
     border-radius: 8px;
     margin-bottom: 12px;
@@ -169,8 +266,8 @@
   .answer {
     padding: 14px 12px;
     margin-bottom: 8px;
-    background: #fff;
-    border: 1px solid #ddd;
+    background: var(--bg);
+    border: 1px solid var(--border);
     border-radius: 8px;
     cursor: pointer;
     display: flex;
@@ -180,8 +277,8 @@
   }
 
   .answer:last-child { margin-bottom: 0; }
-  .answer:active { background: #f0f0f0; }
-  .answer span { color: #888; font-size: 13px; font-weight: 600; min-width: 24px; }
+  .answer:active { opacity: 0.8; }
+  .answer span { color: var(--text2); font-size: 13px; font-weight: 600; min-width: 24px; }
 
   .answer label {
     flex: 1;
@@ -195,10 +292,14 @@
 
   .answer input[type="radio"] { width: 22px; height: 22px; min-width: 22px; cursor: pointer; margin: 0; }
 
-  .answer.correct { background: #d4edda; border-color: #28a745; }
+  .answer.correct { background: #d4edda; border-color: var(--success); }
   .answer.correct label { color: #155724; font-weight: 600; }
-  .answer.wrong { background: #f8d7da; border-color: #dc3545; }
+  .answer.wrong { background: #f8d7da; border-color: var(--danger); }
   .answer.wrong label { color: #721c24; font-weight: 600; }
+  .dark .answer.correct { background: #1e5631; }
+  .dark .answer.correct label { color: #a3e4b7; }
+  .dark .answer.wrong { background: #5c1a1a; }
+  .dark .answer.wrong label { color: #f5a5a5; }
 
   #resultLine {
     margin-top: 12px;
@@ -213,12 +314,11 @@
 
   .nav-buttons { display: flex; gap: 10px; margin-top: 12px; }
   .nav-buttons button { flex: 1; padding: 14px; font-size: 16px; font-weight: 600; }
-  #nextBtn { background: #007bff; color: #fff; border-color: #007bff; }
-  #nextBtn:active { background: #0056b3; }
+  #nextBtn { background: var(--accent); color: #fff; border-color: var(--accent); }
 
-  #stats { padding: 16px; background: #f9f9f9; border-radius: 10px; margin-top: 12px; }
-  #stats h3 { margin: 0 0 12px 0; font-size: 1.2rem; }
-  #stats p { margin: 8px 0; font-size: 15px; line-height: 1.5; word-break: break-word; }
+  #resultsPanel { padding: 16px; background: var(--bg2); border-radius: 10px; margin-top: 12px; border: 1px solid var(--border); }
+  #resultsPanel h3 { margin: 0 0 12px 0; font-size: 1.2rem; }
+  #resultsPanel p { margin: 8px 0; font-size: 15px; line-height: 1.5; word-break: break-word; }
 
   #reviewButtons { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
   #reviewButtons button { width: 100%; text-align: left; padding: 14px 16px; }
@@ -234,7 +334,42 @@
 </head>
 <body>
 
-<h2>Agentforce Exam</h2>
+<h2>
+  Agentforce Exam
+  <button id="darkModeBtn">🌙</button>
+</h2>
+
+<!-- STATS PANEL -->
+<div id="statsPanel" class="hidden">
+  <h3>
+    📊 Статистики
+    <button id="closeStatsBtn" style="padding:6px 10px;font-size:12px;">✕</button>
+  </h3>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-value" id="statTotalExams">0</div>
+      <div class="stat-label">Изпити</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="statAvgScore">0%</div>
+      <div class="stat-label">Среден резултат</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="statAvgTime">0s</div>
+      <div class="stat-label">Ср. време/въпрос</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="statPassRate">0%</div>
+      <div class="stat-label">Взети изпити</div>
+    </div>
+  </div>
+  <canvas id="historyChart"></canvas>
+  <details class="weak-list">
+    <summary>🎯 Слаби точки (най-грешени въпроси)</summary>
+    <div id="weakPointsList"></div>
+  </details>
+  <button id="clearHistoryBtn" style="margin-top:12px;width:100%;background:var(--danger);color:#fff;border-color:var(--danger);">🗑️ Изтрий историята</button>
+</div>
 
 <!-- SETUP PANEL -->
 <div id="setupPanel">
@@ -266,14 +401,15 @@
     <div class="step-header">
       <div class="step-number" id="step3num">3</div>
       <div class="step-title">Избери изпит</div>
-      <button id="reshuffleBtn" class="hidden" style="margin-left:auto;padding:8px 12px;font-size:14px;">🔀 Разбъркай пак</button>
+      <button id="reshuffleBtn" class="hidden" style="margin-left:auto;padding:8px 12px;font-size:14px;">🔀 Разбъркай</button>
     </div>
     <div id="examButtons"></div>
-    <div id="examPlaceholder" style="color:#999;font-size:14px;">Първо избери режим.</div>
+    <div id="examPlaceholder" style="color:var(--text2);font-size:14px;">Първо избери режим.</div>
   </div>
 
   <!-- Step 4: Start -->
   <div class="setup-step">
+    <button id="statsBtn" style="width:100%;margin-bottom:10px;">📊 Виж статистики</button>
     <button id="startBtn" disabled>▶️ Старт</button>
   </div>
 
@@ -281,10 +417,12 @@
 
 <!-- EXAM UI -->
 <div id="examUI" class="hidden">
-  <div id="timer">Time: 105:00</div>
+  <div id="examHeader">
+    <button id="exitBtn" style="padding:8px 12px;font-size:14px;">✕ Изход</button>
+    <div id="timer">Time: 105:00</div>
+    <span id="helpToggle">🛈 Помощ</span>
+  </div>
   
-  <button id="exitBtn" style="margin-bottom:10px;">✕ Смени изпит</button>
-  <span id="helpToggle">🛈 Помощ</span>
   <div id="helpBox" class="hidden">
     <div>
       <div>🔢 <b>1–4</b> – избор на отговор</div>
@@ -293,10 +431,13 @@
     </div>
   </div>
 
+  <div id="progressBar"><div id="progressFill" style="width:0%"></div></div>
+
   <div class="question-header">
     <div>
       <p id="counter"></p>
       <span id="modeIndicator"></span>
+      <div id="questionTime"></div>
     </div>
     <div class="confidence-panel">
       <label><input type="checkbox" id="dontKnow"> ❓ Не знам</label>
@@ -317,7 +458,7 @@
   </div>
 </div>
 
-<div id="stats" class="hidden"></div>
+<div id="resultsPanel" class="hidden"></div>
 
 <script>
 const $ = id => document.getElementById(id);
@@ -326,7 +467,8 @@ const $ = id => document.getElementById(id);
 const setupPanel = $("setupPanel");
 const examUI = $("examUI");
 const timerEl = $("timer");
-const statsEl = $("stats");
+const resultsPanel = $("resultsPanel");
+const statsPanel = $("statsPanel");
 const helpBoxEl = $("helpBox");
 const helpToggleEl = $("helpToggle");
 const counterEl = $("counter");
@@ -345,36 +487,57 @@ const modeDescEl = $("modeDesc");
 const examButtonsEl = $("examButtons");
 const examPlaceholder = $("examPlaceholder");
 const startBtn = $("startBtn");
-const step1num = $("step1num");
-const step2num = $("step2num");
-const step3num = $("step3num");
+const reshuffleBtn = $("reshuffleBtn");
+const exitBtn = $("exitBtn");
+const darkModeBtn = $("darkModeBtn");
+const statsBtn = $("statsBtn");
+const progressFill = $("progressFill");
+const questionTimeEl = $("questionTime");
 
 // State
 let QUESTIONS = {}, ALL_QIDS = [], EXAMS = [], STACK = [], index = 0;
 let questionState = {}, answerOrder = {};
 let baseStack = null, baseState = null;
 let examStartTime = null, timerInterval = null;
+let questionStartTime = null;
 const EXAM_TIME_SECONDS = 105 * 60;
 let currentRoundType = "base";
-let currentMode = null; // "learning" or "exam"
+let currentMode = null;
 let selectedExamIndex = null;
+
+// History (localStorage)
+let history = JSON.parse(localStorage.getItem('agentforce_history') || '[]');
+let wrongCounts = JSON.parse(localStorage.getItem('agentforce_wrong') || '{}');
+
+// Dark mode
+if (localStorage.getItem('darkMode') === 'true') {
+  document.body.classList.add('dark');
+  darkModeBtn.textContent = '☀️';
+}
+
+darkModeBtn.addEventListener('click', () => {
+  document.body.classList.toggle('dark');
+  const isDark = document.body.classList.contains('dark');
+  darkModeBtn.textContent = isDark ? '☀️' : '🌙';
+  localStorage.setItem('darkMode', isDark);
+});
 
 // Load questions
 fetch("./agentforce_questions.json")
   .then(r => { if (!r.ok) throw new Error("JSON load failed"); return r.json(); })
   .then(d => {
     d.questions.forEach(q => { QUESTIONS[q.number] = q; ALL_QIDS.push(q.number); });
-    loadStatusEl.textContent = `✅ Заредени ${ALL_QIDS.length} въпроса`;
-    loadStatusEl.style.color = "#28a745";
-    step1num.classList.add("done");
-    step2num.classList.add("active");
+    loadStatusEl.textContent = `✅ ${ALL_QIDS.length} въпроса`;
+    loadStatusEl.style.color = "var(--success)";
+    $("step1num").classList.add("done");
+    $("step2num").classList.add("active");
     learningModeBtn.disabled = false;
     examModeBtn.disabled = false;
     modeDescEl.textContent = "Избери как искаш да се упражняваш.";
   })
   .catch(err => {
-    loadStatusEl.textContent = "❌ Грешка при зареждане";
-    loadStatusEl.style.color = "#dc3545";
+    loadStatusEl.textContent = "❌ Грешка";
+    loadStatusEl.style.color = "var(--danger)";
     console.error(err);
   });
 
@@ -384,23 +547,112 @@ function deepClone(obj) { return JSON.parse(JSON.stringify(obj)); }
 function getCorrectText(qid) { return QUESTIONS[qid].correct.map(a => QUESTIONS[qid].answers[a]).join(", "); }
 function ensureOrderForQid(qid) { if (!answerOrder[qid]) answerOrder[qid] = shuffle(Object.entries(QUESTIONS[qid].answers)); }
 
-const reshuffleBtn = $("reshuffleBtn");
+// Stats panel
+statsBtn.addEventListener('click', () => {
+  renderStatsPanel();
+  statsPanel.classList.remove('hidden');
+});
 
-// Step 2: Mode selection
+$("closeStatsBtn").addEventListener('click', () => statsPanel.classList.add('hidden'));
+
+$("clearHistoryBtn").addEventListener('click', () => {
+  if (!confirm('Сигурен ли си? Цялата история ще бъде изтрита.')) return;
+  history = [];
+  wrongCounts = {};
+  localStorage.removeItem('agentforce_history');
+  localStorage.removeItem('agentforce_wrong');
+  renderStatsPanel();
+});
+
+function renderStatsPanel() {
+  const total = history.length;
+  const avgScore = total ? Math.round(history.reduce((a, h) => a + h.pct, 0) / total) : 0;
+  const avgTime = total ? Math.round(history.reduce((a, h) => a + h.avgTime, 0) / total) : 0;
+  const passed = history.filter(h => h.pct >= 72).length;
+  const passRate = total ? Math.round(passed / total * 100) : 0;
+
+  $("statTotalExams").textContent = total;
+  $("statAvgScore").textContent = avgScore + '%';
+  $("statAvgTime").textContent = avgTime + 's';
+  $("statPassRate").textContent = passRate + '%';
+
+  // Weak points
+  const sorted = Object.entries(wrongCounts).sort((a, b) => b[1] - a[1]).slice(0, 10);
+  $("weakPointsList").innerHTML = sorted.length ? sorted.map(([qid, cnt]) => 
+    `<div class="weak-item"><span>Q${qid}</span><span>${cnt}x грешен</span></div>`
+  ).join('') : '<div style="padding:8px;color:var(--text2);">Няма данни</div>';
+
+  // Chart
+  drawChart();
+}
+
+function drawChart() {
+  const canvas = $("historyChart");
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width = canvas.offsetWidth;
+  const h = canvas.height = 120;
+  ctx.clearRect(0, 0, w, h);
+
+  if (history.length < 2) {
+    ctx.fillStyle = 'var(--text2)';
+    ctx.font = '14px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Нужни са поне 2 изпита за графика', w/2, h/2);
+    return;
+  }
+
+  const last10 = history.slice(-10);
+  const maxPct = 100;
+  const padding = 30;
+  const chartW = w - padding * 2;
+  const chartH = h - padding;
+  const stepX = chartW / (last10.length - 1);
+
+  // 72% line
+  ctx.strokeStyle = 'var(--danger)';
+  ctx.setLineDash([5, 5]);
+  ctx.beginPath();
+  const y72 = padding + chartH * (1 - 72/maxPct);
+  ctx.moveTo(padding, y72);
+  ctx.lineTo(w - padding, y72);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Line
+  ctx.strokeStyle = 'var(--accent)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  last10.forEach((h, i) => {
+    const x = padding + i * stepX;
+    const y = padding + chartH * (1 - h.pct/maxPct);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  // Points
+  ctx.fillStyle = 'var(--accent)';
+  last10.forEach((h, i) => {
+    const x = padding + i * stepX;
+    const y = padding + chartH * (1 - h.pct/maxPct);
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+
+// Mode selection
 function selectMode(mode) {
   currentMode = mode;
   learningModeBtn.classList.toggle("selected", mode === "learning");
   examModeBtn.classList.toggle("selected", mode === "exam");
   
-  if (mode === "learning") {
-    modeDescEl.textContent = "📚 Виждаш верния отговор веднага. Можеш да преговаряш грешките.";
-  } else {
-    modeDescEl.textContent = "📝 Симулация на изпит. Резултатите се показват накрая.";
-  }
+  modeDescEl.textContent = mode === "learning" 
+    ? "📚 Виждаш верния отговор веднага. Можеш да преговаряш грешките."
+    : "📝 Симулация на изпит. Резултатите се показват накрая.";
   
-  step2num.classList.remove("active");
-  step2num.classList.add("done");
-  step3num.classList.add("active");
+  $("step2num").classList.remove("active");
+  $("step2num").classList.add("done");
+  $("step3num").classList.add("active");
   
   generateExams();
 }
@@ -408,7 +660,7 @@ function selectMode(mode) {
 learningModeBtn.addEventListener("click", () => selectMode("learning"));
 examModeBtn.addEventListener("click", () => selectMode("exam"));
 
-// Step 3: Generate exams
+// Generate exams
 function generateExams() {
   const s = shuffle([...ALL_QIDS]);
   EXAMS = [];
@@ -421,49 +673,43 @@ function generateExams() {
   startBtn.disabled = true;
   
   examButtonsEl.innerHTML = EXAMS.map((e, i) => 
-    `<button data-exam="${i}">Изпит ${i + 1} (${e.length} въпр.)</button>`
+    `<button data-exam="${i}">Изпит ${i + 1} (${e.length})</button>`
   ).join("");
 }
 
 reshuffleBtn.addEventListener("click", () => {
   generateExams();
-  step3num.classList.remove("done");
-  step3num.classList.add("active");
+  $("step3num").classList.remove("done");
+  $("step3num").classList.add("active");
 });
 
 examButtonsEl.addEventListener("click", e => {
   const btn = e.target.closest("button");
   if (!btn) return;
   
-  // Deselect all, select clicked
   examButtonsEl.querySelectorAll("button").forEach(b => b.classList.remove("selected"));
   btn.classList.add("selected");
   
   selectedExamIndex = Number(btn.dataset.exam);
-  step3num.classList.remove("active");
-  step3num.classList.add("done");
+  $("step3num").classList.remove("active");
+  $("step3num").classList.add("done");
   startBtn.disabled = false;
 });
 
-// Step 4: Start
 startBtn.addEventListener("click", () => {
   if (selectedExamIndex === null || !currentMode) return;
   startRound("base", EXAMS[selectedExamIndex]);
 });
 
-const exitBtn = $("exitBtn");
-
-// Exit to setup
 exitBtn.addEventListener("click", () => {
   if (!confirm("Сигурен ли си? Прогресът ще бъде загубен.")) return;
   clearInterval(timerInterval);
   examUI.classList.add("hidden");
   setupPanel.classList.remove("hidden");
-  // Reset for new exam selection
   selectedExamIndex = null;
   examButtonsEl.querySelectorAll("button").forEach(b => b.classList.remove("selected"));
-  step3num.classList.remove("done");
-  step3num.classList.add("active");
+  $("step3num").classList.remove("done");
+  $("step3num").classList.add("active");
   startBtn.disabled = true;
 });
 
@@ -489,13 +735,15 @@ function startRound(roundType, stack) {
   answerOrder = {};
   
   setupPanel.classList.add("hidden");
-  statsEl.classList.add("hidden");
+  statsPanel.classList.add("hidden");
+  resultsPanel.classList.add("hidden");
   examUI.classList.remove("hidden");
   
   modeIndicatorEl.textContent = currentMode === "learning" ? "📚 Learning" : "📝 Exam";
   modeIndicatorEl.className = currentMode;
   
   startTimer();
+  questionStartTime = Date.now();
   showQuestion();
 }
 
@@ -504,12 +752,23 @@ function showQuestion() {
   ensureOrderForQid(qid);
   const state = questionState[qid];
 
+  // Progress
+  const answered = Object.values(questionState).filter(s => s.status !== "unanswered").length;
+  progressFill.style.width = (answered / STACK.length * 100) + '%';
+
   counterEl.innerText = `[Q${qid}] ${index + 1} / ${STACK.length}`;
   questionEl.innerText = q.question;
   answersEl.innerHTML = "";
   resultLineEl.innerHTML = "";
   resultLineEl.style.background = "";
   resultLineEl.style.color = "";
+
+  // Question time
+  if (state?.time) {
+    questionTimeEl.textContent = `⏱️ ${state.time}s`;
+  } else {
+    questionTimeEl.textContent = "";
+  }
 
   dontKnowEl.checked = state?.dontKnow || false;
   notSureEl.checked = state?.notSure || false;
@@ -523,7 +782,6 @@ function showQuestion() {
     if (r) r.checked = true;
   }
 
-  // Learning mode: show feedback if already answered
   if (currentMode === "learning" && state && state.status && state.status !== "unanswered") {
     document.querySelectorAll('input[name="answer"]').forEach(r => r.disabled = true);
     dontKnowEl.disabled = true;
@@ -532,18 +790,19 @@ function showQuestion() {
     if (state.status === "correct") {
       selWrap?.classList.add("correct");
       resultLineEl.innerText = "✅ Вярно";
-      resultLineEl.style.background = "#d4edda";
-      resultLineEl.style.color = "#155724";
+      resultLineEl.style.background = "var(--success)";
+      resultLineEl.style.color = "#fff";
     } else {
       selWrap?.classList.add("wrong");
       resultLineEl.innerText = `❌ Грешно → ${getCorrectText(qid)}`;
-      resultLineEl.style.background = "#f8d7da";
-      resultLineEl.style.color = "#721c24";
+      resultLineEl.style.background = "var(--danger)";
+      resultLineEl.style.color = "#fff";
     }
   } else {
     document.querySelectorAll('input[name="answer"]').forEach(r => r.disabled = false);
     dontKnowEl.disabled = false;
     notSureEl.disabled = false;
+    questionStartTime = Date.now();
   }
 }
 
@@ -555,7 +814,8 @@ function upsertDraftState() {
     selectedAnswer: sel ? sel.value : (existing?.selectedAnswer || null),
     status: existing?.status || "unanswered",
     dontKnow: dontKnowEl.checked,
-    notSure: notSureEl.checked
+    notSure: notSureEl.checked,
+    time: existing?.time || 0
   };
 }
 
@@ -574,12 +834,24 @@ function checkCurrentQuestion() {
   const qid = STACK[index], q = QUESTIONS[qid];
   const sel = document.querySelector('input[name="answer"]:checked');
   if (!sel) return false;
+  
+  const timeSpent = Math.round((Date.now() - questionStartTime) / 1000);
+  const isCorrect = q.correct.includes(sel.value);
+  
   questionState[qid] = {
     selectedAnswer: sel.value,
-    status: q.correct.includes(sel.value) ? "correct" : "wrong",
+    status: isCorrect ? "correct" : "wrong",
     dontKnow: dontKnowEl.checked,
-    notSure: notSureEl.checked
+    notSure: notSureEl.checked,
+    time: timeSpent
   };
+  
+  // Track wrong answers
+  if (!isCorrect) {
+    wrongCounts[qid] = (wrongCounts[qid] || 0) + 1;
+    localStorage.setItem('agentforce_wrong', JSON.stringify(wrongCounts));
+  }
+  
   return true;
 }
 
@@ -596,11 +868,11 @@ function nextAction() {
       showQuestion();
       return;
     }
-    if (index < STACK.length - 1) { index++; showQuestion(); }
+    if (index < STACK.length - 1) { index++; questionStartTime = Date.now(); showQuestion(); }
     else finishExam();
   } else {
     checkCurrentQuestion();
-    if (index < STACK.length - 1) { index++; showQuestion(); }
+    if (index < STACK.length - 1) { index++; questionStartTime = Date.now(); showQuestion(); }
     else finishExam();
   }
 }
@@ -623,34 +895,57 @@ document.addEventListener("keydown", e => {
 helpToggleEl.addEventListener("click", () => helpBoxEl.classList.toggle("hidden"));
 
 function computeStats(stateObj, stackArr) {
-  let correct = 0, wrong = [], dk = [], ns = [], correctButNotSure = [];
+  let correct = 0, wrong = [], dk = [], ns = [], correctButNotSure = [], totalTime = 0;
   stackArr.forEach(qid => {
     const s = stateObj[qid];
     if (!s || !s.status || s.status === "unanswered") return;
     if (s.dontKnow) dk.push(qid);
     if (s.notSure) ns.push(qid);
+    totalTime += s.time || 0;
     if (s.status === "correct") { correct++; if (s.notSure) correctButNotSure.push(qid); }
     else wrong.push(qid);
   });
-  return { correct, wrong, dk, ns, correctButNotSure };
+  return { correct, wrong, dk, ns, correctButNotSure, totalTime };
 }
 
 function finishExam() {
   clearInterval(timerInterval);
   examUI.classList.add("hidden");
-  if (currentRoundType === "base") { baseState = deepClone(questionState); baseStack = STACK.slice(); }
-  renderStatsScreen();
+  
+  if (currentRoundType === "base") {
+    baseState = deepClone(questionState);
+    baseStack = STACK.slice();
+    
+    // Save to history
+    const stats = computeStats(questionState, STACK);
+    const t = STACK.length;
+    const pct = t ? Math.round(stats.correct / t * 100) : 0;
+    const avgTime = t ? Math.round(stats.totalTime / t) : 0;
+    
+    history.push({
+      date: new Date().toISOString(),
+      mode: currentMode,
+      total: t,
+      correct: stats.correct,
+      pct,
+      avgTime
+    });
+    localStorage.setItem('agentforce_history', JSON.stringify(history));
+  }
+  
+  renderResultsScreen();
 }
 
-function renderStatsScreen() {
-  statsEl.classList.remove("hidden");
-  const t = STACK.length, sec = examStartTime ? Math.floor((Date.Now() - examStartTime) / 1000) : 0;
-  const { correct, wrong, dk, ns, correctButNotSure } = computeStats(questionState, STACK);
+function renderResultsScreen() {
+  resultsPanel.classList.remove("hidden");
+  const t = STACK.length;
+  const { correct, wrong, dk, ns, correctButNotSure, totalTime } = computeStats(questionState, STACK);
   const pct = t ? Math.round(correct / t * 100) : 0;
   const passed = pct >= 72;
+  const avgTime = t ? Math.round(totalTime / t) : 0;
   
   const modeLabel = currentMode === "learning" ? "📚 Learning" : "📝 Exam";
-  const titles = { base: "Резултат", reviewWrong: "Преглед: грешни", reviewNotSure: "Преглед: несигурни", reviewDontKnow: "Преглед: не знам" };
+  const titles = { base: "Резултат", reviewWrong: "Грешни", reviewNotSure: "Несигурни", reviewDontKnow: "Не знам" };
 
   let reviewHtml = "";
   if (baseState && baseStack && currentMode === "learning") {
@@ -659,53 +954,55 @@ function renderStatsScreen() {
       <button id="reviewWrongBtn" ${bs.wrong.length ? "" : "disabled"}>🔁 Грешни (${bs.wrong.length})</button>
       <button id="reviewNotSureBtn" ${bs.ns.length ? "" : "disabled"}>⚠️ Несигурни (${bs.ns.length})</button>
       <button id="reviewDontKnowBtn" ${bs.dk.length ? "" : "disabled"}>❓ Не знам (${bs.dk.length})</button>
-      ${currentRoundType !== "base" ? `<button id="backToBaseResultsBtn">⬅️ Основен резултат</button>` : ""}
+      ${currentRoundType !== "base" ? `<button id="backToBaseResultsBtn">⬅️ Основен</button>` : ""}
     </div>`;
   }
 
-  let newExamHtml = `<div style="margin-top:16px;"><button id="newExamBtn">🔄 Нов изпит</button></div>`;
-
-  statsEl.innerHTML = `
-    <h3>${titles[currentRoundType] || "Резултат"} <small style="font-weight:normal;color:#666;">(${modeLabel})</small></h3>
-    <p style="font-size:18px;"><strong>${passed ? "✅ ВЗЕТ" : "❌ НЕ Е ВЗЕТ"}</strong> (мин. 72%)</p>
+  resultsPanel.innerHTML = `
+    <h3>${titles[currentRoundType] || "Резултат"} <small style="font-weight:normal;color:var(--text2);">(${modeLabel})</small></h3>
+    <p style="font-size:20px;"><strong>${passed ? "✅ ВЗЕТ" : "❌ НЕ Е ВЗЕТ"}</strong> (мин. 72%)</p>
     <p><strong>Верни:</strong> ${correct} / ${t} (${pct}%)</p>
     <p>❌ <strong>Грешни:</strong> ${wrong.length > 0 ? wrong.join(", ") : "—"}</p>
     <p>⚠️ <strong>Верни, но несигурни:</strong> ${correctButNotSure.length > 0 ? correctButNotSure.join(", ") : "—"}</p>
     <p>❓ <strong>Не знам:</strong> ${dk.length > 0 ? dk.join(", ") : "—"}</p>
-    <p>⏱ <strong>Време:</strong> ${Math.floor(sec / 60)}m ${sec % 60}s (средно ${t ? Math.round(sec / t) : 0}s/въпрос)</p>
+    <p>⏱️ <strong>Време:</strong> ${Math.floor(totalTime / 60)}m ${totalTime % 60}s (средно ${avgTime}s/въпрос)</p>
     ${reviewHtml}
-    ${newExamHtml}`;
+    <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+      <button id="newExamBtn" style="flex:1;">🔄 Нов изпит</button>
+      <button id="viewStatsBtn" style="flex:1;">📊 Статистики</button>
+    </div>`;
 
-  $("newExamBtn")?.addEventListener("click", () => {
-    statsEl.classList.add("hidden");
-    setupPanel.classList.remove("hidden");
-    // Reset steps 2 & 3
-    currentMode = null;
-    selectedExamIndex = null;
-    learningModeBtn.classList.remove("selected");
-    examModeBtn.classList.remove("selected");
-    step2num.classList.remove("done");
-    step2num.classList.add("active");
-    step3num.classList.remove("done", "active");
-    examButtonsEl.innerHTML = "";
-    examPlaceholder.classList.remove("hidden");
-    examPlaceholder.textContent = "Първо избери режим.";
-    startBtn.disabled = true;
-    modeDescEl.textContent = "Избери как искаш да се упражняваш.";
-  });
+  $("newExamBtn").addEventListener("click", resetToSetup);
+  $("viewStatsBtn").addEventListener("click", () => { renderStatsPanel(); statsPanel.classList.remove('hidden'); });
 
   if (currentMode === "learning") {
-    $("reviewWrongBtn")?.addEventListener("click", () => { statsEl.classList.add("hidden"); startRound("reviewWrong", computeStats(baseState, baseStack).wrong); });
-    $("reviewNotSureBtn")?.addEventListener("click", () => { statsEl.classList.add("hidden"); startRound("reviewNotSure", computeStats(baseState, baseStack).ns); });
-    $("reviewDontKnowBtn")?.addEventListener("click", () => { statsEl.classList.add("hidden"); startRound("reviewDontKnow", computeStats(baseState, baseStack).dk); });
+    $("reviewWrongBtn")?.addEventListener("click", () => { resultsPanel.classList.add("hidden"); startRound("reviewWrong", computeStats(baseState, baseStack).wrong); });
+    $("reviewNotSureBtn")?.addEventListener("click", () => { resultsPanel.classList.add("hidden"); startRound("reviewNotSure", computeStats(baseState, baseStack).ns); });
+    $("reviewDontKnowBtn")?.addEventListener("click", () => { resultsPanel.classList.add("hidden"); startRound("reviewDontKnow", computeStats(baseState, baseStack).dk); });
     $("backToBaseResultsBtn")?.addEventListener("click", () => { 
       currentRoundType = "base"; 
       questionState = deepClone(baseState); 
       STACK = baseStack.slice(); 
-      examStartTime = null; 
-      renderStatsScreen(); 
+      renderResultsScreen(); 
     });
   }
+}
+
+function resetToSetup() {
+  resultsPanel.classList.add("hidden");
+  setupPanel.classList.remove("hidden");
+  currentMode = null;
+  selectedExamIndex = null;
+  learningModeBtn.classList.remove("selected");
+  examModeBtn.classList.remove("selected");
+  $("step2num").classList.remove("done");
+  $("step2num").classList.add("active");
+  $("step3num").classList.remove("done", "active");
+  examButtonsEl.innerHTML = "";
+  examPlaceholder.classList.remove("hidden");
+  reshuffleBtn.classList.add("hidden");
+  startBtn.disabled = true;
+  modeDescEl.textContent = "Избери как искаш да се упражняваш.";
 }
 </script>
 </body>
